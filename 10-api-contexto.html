@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rocketseat - React.js - Fundamentos</title>
+</head>
+<body>
+    <div id="root"></div>
+        
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>   
+
+    <script type="text/babel">
+        const CounterContext = React.createContext(); //Letra maíuscula = componente do React - Contexto criado - Tem que encapsular 
+
+        function CounterProvider({children}){ //Utilizar ele - Outro componente - Vai prover os dados
+            
+            const [savedCounts, setSavedCounts] = React.useState([]); //Colocar os dados nele - Criar um histórico do que eu quero salvar 
+            //Uma lista - Quando for clicando no botão de salvar, vai adicionando o valor atual do contador nessa lista
+            //API de contexto global
+
+            function saveCount(count) {
+                setSavedCounts((prev) => [...prev, count]) //Sempre vai adicionar o novo elemento no final da lista
+            }
+
+            return (
+                <CounterContext.Provider value={{savedCounts, saveCount}}> {/*Passa em valor de objeto múltiplos valores - O que queremos*/}
+                    {children}
+                </CounterContext.Provider>
+            )
+        }
+
+        function Counter() {
+            const [counter, setCounter] = React.useState(0); //Uma dupla - Indice 1 e - O primeito é o Valor que vai ter (estado) e o segundo é a função que vai atualizar o valor - O zero é o valor padrão
+            const { saveCount, savedCounts } = React.useContext(CounterContext) //Pega a função que está dentro do contexto - Pega o valor do contexto
+            
+            return (
+                <>
+                    <p>Contador: {counter}</p>
+                    <button onClick={() => setCounter(10)}>Atualizar</button>
+                    <button onClick={() => setCounter((prevValue) => (prevValue + 1))}>Incrementar</button>
+                    <button onClick={() => setCounter((prevValue) => (prevValue - 1))}>Decrementar</button>
+                    <button onClick={() => saveCount(counter)}>Salvar</button>
+                </>
+            )
+        }
+
+        function CounterList() { //Componente para listar os avlores salvos
+           const { savedCounts } = React.useContext(CounterContext); //Busca o valor dentro da li - saveCounts é a lista
+
+            return (
+                <div>
+                    <h2>Valores salvos</h2> {/*/Renderização de lista dentro do React*/}
+
+                    <ul>       {/*Lista - Busca o valor dentro do count */}
+                        {savedCounts.map((value, index) =>
+                            <li key={`item-${index}`}>{value}</li>
+                        )} 
+                    </ul>
+                </div>
+            )
+        }
+
+        function App() {
+            return (
+                <main class="p-3">
+                    <CounterProvider> {/*Tem que estar dentro do Provider - Entende que o componente existe de forma global*/}
+                        <Counter />
+                        <hr />
+                        <CounterList />
+                    </CounterProvider>
+                </main>
+            )
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />)
+    </script> 
+
+</body>
+</html>

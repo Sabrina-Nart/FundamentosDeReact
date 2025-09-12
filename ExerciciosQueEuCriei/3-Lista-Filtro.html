@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercícios que eu criei</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 020px;
+        }
+
+        input {
+            margin: 5px 0;
+            padding: 8px;
+            width: 200px;
+        }
+
+        button {
+            padding: 8px 12px;
+            margin-left: 5px;
+            background-color: rgb(132, 95, 165);
+            color: white;
+            border: rgb(166, 75, 207);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+ 
+        ul {
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+        
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>   
+
+    <script type="text/babel">
+
+        function ListaDescricao() {
+            
+            const [nomes] = React.useState(['Gabriel', 'João'])
+            const [serch, setSerch] = React.useState("");
+            const [novoNome, setNovoNome] = React.useState("")
+
+            function AdicionarNome() {
+                if(novoNome.trim() !== "") {
+                    setNomes([...nomes, novoNome.trim()])
+                    setNovoNome("")
+                }
+            }
+
+            return (
+                <div>
+                    <h2>Lista de nomes</h2>
+
+                    <input type="text" placeholder="Pesquisar" value={serch} onChange={e => setSerch(e.target.value)}/>
+                    <br />
+                    <input type="text" placeholder="Novo nome" value={novoNome} onChange={e => setNovoNome(e.target.value)}/>
+                    <button onClick={AdicionarNome}>Adicionar</button>
+
+                    <ul>               
+                        {nomes.filter(nome => nome.toLowerCase().includes(serch.toLowerCase())).map((nome, index) => (<li key={`${index}-{nome}`}>{nome}</li>))}                    
+                    </ul>
+                </div>
+            );
+        }
+
+        function App() {
+            return (
+                <main>
+                    <ListaDescricao />
+                </main>
+            )
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />)
+    </script> 
+
+</body>
+</html>

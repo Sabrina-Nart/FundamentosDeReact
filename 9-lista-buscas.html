@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rocketseat - React.js - Fundamentos</title>
+</head>
+<body>
+    <div id="root"></div>
+        
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>   
+
+    <script type="text/babel">
+
+        function ListNames() {
+            const [names] = React.useState(['Ana', 'Bruno', 'Carlos', 'Daniel', 'Eduardo', 'Fernando']) //Estado inicial - Array de nomes
+
+            const [serch , setSerch] = React.useState(""); //Estado inicial - Array de nomes - A busca vai começar vázia
+
+            return (
+                <ul>
+                    <input type="text" placeholder="Buscar por nome..." value={serch} onChange={e => setSerch(e.target.value)} /> {/*e.target é o que seria o elemento e o value seria o valor que tem dentro do campo*/}
+
+                    {names .filter(name => name.toLowerCase().includes(serch.toLowerCase())) //Saber se o que eu digitei que é o serch, está incluso no nome - Coloca tudo em minúsculo para não ter erro
+                           .map((name, index) => <li key={`${index}-${name}`}>{name}</li>)} {/*/Mapeia o array - Não sabe o valor da API - Pega o resultado da API, faz um map e já vai rodar */}
+                </ul>
+            )
+        }
+
+        function App() {
+            return (
+                <main>
+                    <ListNames />
+                </main>
+            )
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />)
+    </script> 
+
+</body>
+</html>

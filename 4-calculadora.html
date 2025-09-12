@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet" />
+
+    <title>Rocketseat - React.js - Fundamentos</title>
+
+    <style type="text/tailwindcss">
+        @theme {
+            --text: #EBEBEB;
+            --text-secondary: #6B6B6B;
+            --primary: #462878;
+            --background: #2D2A37;
+        
+            --gradient: 180deg, 
+                rgba(0, 0, 0, 0.05) 0%, 
+                rgba(255, 255, 255, 0.05) 100%;
+        
+            --gradient-hover: 180deg, 
+                rgba(0, 0, 0, 0.1) 0%, 
+                rgba(255, 255, 255, 0.1) 100%;
+        
+            --shadow: 0px 11px 7px 0px rgba(0, 0, 0, 0.01), 
+                      0px 7px 7px 0px rgba(0, 0, 0, 0.04), 
+                      0px 4px 6px 0px rgba(0, 0, 0, 0.10), 
+                      0px 2px 4px 0px rgba(0, 0, 0, 0.26), 
+                      0px 0px 2px 0px rgba(0, 0, 0, 0.29), 
+                      0px 2px 3px 0px rgba(255, 255, 255, 0.06) inset;
+        
+            --font-sans: 'Rubik', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-linear-[180deg,_#807ECE_0%,_#807ECE_100%] min-h-screen text-(--text) font-(--font-sans)">
+    <div id="root"></div>
+
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>   
+
+    <script type="text/babel">
+
+        const textVariantes = {
+            default: 'text-xl',
+            muted: 'text-xl text-[var(--text-secondary)]',
+            heading: 'text-xl',
+            blast: 'text-3xl',
+        }
+
+        function Text({ 
+            as = 'span', 
+            variant = 'default',
+            className,
+            children,
+            ...props
+        }) {
+            return React.createElement(
+                as,
+                {
+                    className: `${textVariantes[variant]} ${className || ''}`,
+                    ...props
+                },
+                children
+            )
+        }
+
+        const buttonVariantes = {
+            default: 'bg-(--background)',
+            primary: 'bg-(--primary)',
+        }
+            
+        function Button({ variant = 'default', children, className, ...props }) {
+            return (
+                <Text 
+                    as="button"
+                    variant="heading"
+                    className={`
+                        flex items-center justify-center rounded-xl
+                        p-3 cursor-pointer text-(--text)
+                        bg-linear-(--gradient)
+                        hover:bg-linear-(--gradient-hover)
+                        shadow-(--shadow)
+
+                        ${buttonVariantes[variant]}
+                        ${className ? className : ''}
+                    `}
+                    {...props}
+                >
+                    {children}
+                </Text>
+            )
+        }
+
+        function Card({ children, className, ...props }) {
+            return (
+                <div className={`
+                    bg-(--background) shadow-(--shadow)
+                    rounded-2xl
+
+                    ${className ? className : ''}
+                `}>
+                    {children}
+                </div>
+            )
+        }
+    
+        const buttons = [ //Coloco o que eu realmente quero alterar
+            [ //Abrir uma lista
+                { input: "CE" }, //input = valor que eu quero   exibir no botão
+                { input: "C", className: "flex-1 h-16" }, //Se eu tiver um className eu vou renderizar ele - Se a className não existir, ele vai pegar esse valor
+                { input: "/", variant: "primary" }, //Se eu tiver uma variante eu vou renderizar ela - Se a variante não existir, ele vai pegar a padrão
+            ], [
+                { input: "7" },
+                { input: "8" },
+                { input: "9" },
+                { input: "*", variant: "primary" },
+            ], [
+                { input: "4" },
+                { input: "5" },
+                { input: "6" },
+                { input: "-", variant: "primary" },
+            ], [
+                { input: "1" },
+                { input: "2" },
+                { input: "3" },
+                { input: "+", variant: "primary" },
+            ], [
+                { input: "0", className: "flex-1 h-16" },
+                { input: "," },
+                { input: "=", className: "flex-16 h-16 bg-[#7F45E2]" },
+            ]
+        ]
+
+        const CalculatorContext = React.createContext();
+        function CalculatorProvider({ children }) {
+            const [history, setHistory] = React.useState([]); //Estado para guardar o histórico de operações
+            const historyStorageKey = 'history'; //Dados percistentes - Ao atualizar a página, não vai sumir tudo - É  key do localStorage do F12
+
+            React.useEffect(() => { //Carregar o histórico do localStorage quando o componente for montado
+                const savedHistory = localStorage.getItem(historyStorageKey); //Pega o valor do localStorage - Pega os dados
+                setHistory(JSON.parse(savedHistory) || '[]'); //Converte de volta para array - Se não tiver nada, ele vai iniciar com array vázio
+            }, []); //Executa apenas uma vez quando o componente for montado
+            
+            function updateHistory(operation, parseResult) {
+                setHistory((prev) => {
+                    const updateHistory = [...prev, `${operation}=${parseResult}`]; //pegando a operação, colocando o igual e o resultado
+
+                    localStorage.setItem(historyStorageKey, JSON.stringify(updateHistory)); //Salva no localStorage - Converte para string
+
+                    return updateHistory;
+                })
+            }
+            
+            return (
+                <CalculatorContext.Provider value={{ history, updateHistory }}>
+                    {children}
+                </CalculatorContext.Provider>
+            )  
+        }
+
+        function useCalculator() { //Posso usar esse hook em qualquer lugar - Ex: Cálculadora científica
+            const [operation, setOperation] = React.useState(''); //Responsável por mostra a operação - Começa com o valor vázio
+            const [result, setResult] = React.useState(''); //Responsável por mostrar o resultado - Começa com o valor vázio
+            const { updateHistory } = React.useContext(CalculatorContext); //Pega a função que está dentro do contexto - Pega o valor do contexto
+
+            function doOperation ( input) { //Saber qual input tem que usar
+
+                if (input === "C") { //Se o input for igual a C LIMPA TUDO
+                    setOperation(''); //Atualiza o estado da operação para vázio
+                    setResult(''); //Atualiza o estado do resultado para vázio
+                    return; //Para a função aqui - Terminei a operação, eu saio da função
+                }
+
+                if (input === "CE") { //Se o input for igual a CE LIMPA A ÚLTIMA OPERAÇÂO INCLUINDO O ESPAÇO
+                    setResult(""); //Atualiza o estado do resultado para vázio - Volta para o display principal
+                    setOperation((operation.slice(0, -1)));
+                    return; 
+                }
+
+                if (input === "=") { //Se o input for igual a = Pega o eval e substitui a vírgula por ponto. Ele executa o JavaScript como string
+                    const operationResult = eval(operation.replace(/,/g,'.')); //eval = executa qualquer string do JavaScript - Nesse caso ele vai pegar a aoperação --- Converte para o computador entender que a vírgula é o ponto. No Brasil o decimal é a vírgula, nos EUA é o ponto mesmo
+                    const parsedResult = operationResult.toString()?.replace(/\./g,','); //Transforma o resultado em string e troca o ponto por vírgula
+
+                    setResult(parsedResult); //Atualiza o estado do resultado
+                    updateHistory(operation, parsedResult); //Atualiza o histórico de operações
+                    return; //Para a função aqui - Terminei a operação, eu saio da função
+                }
+                
+                if (result) { //Se o resultado já existe e eu quero continuar - Se for número, ele contínua. Se for vírgula ou etc, ele vai colocar o resultado atual mais o campo que foi clicado e não contínua, pois o valor não existe
+                    setOperation(isNaN(input) ? `${result}${input}` : input)
+                    setResult("");
+                    return;
+                }
+
+                if (input === "," && !operation.endsWith(',')) { //Seo meu input não for vírgula e a minha operação não terminar com vírgula
+                    setOperation(`${operation},`); //Se terminar, eu vou ignorar
+                    return; //Para a função aqui - Terminei a operação, eu saio da função
+                }
+
+                //Se não entrar em nenhuma das condições, eu estou inserindo um novo valore concatenando
+                //Quando eu clicar em um botão, eu vou atualizar o estado da operação
+                setOperation(`${operation}${ input}`); 
+                    //Pega o valor que já está na operação e concatena com o valor que eu cliquei                
+            }
+
+            return { //Sempre vai ter um objeto de retorno - Tudo o que está relacionado com a operação
+                operation,
+                result,
+                doOperation
+            }
+        }
+
+        function CalculatorDisplay({ operation, result }) {
+            return (
+                <div className={`
+                            flex flex-col gap-2 px-[1.375rem]
+                            cursor-default select-none
+                        `}>
+                    <Text
+                        as="div"
+                        variant="muted"
+                        className="flex items-center justify-end h-7"
+                    >
+                        {result && operation} {/*Se eu tiver esultado, eu mostro a operação em cima*/}
+                    </Text>
+
+                    <div className={`
+                            flex items-center justify-between h-9
+                        `}>
+                            <Text variant="muted"> = </Text>
+                            <Text variant="blast"> {result || operation}</Text> {/*Se não tenho resultado eu mostro o cálculo em baixo, se não eu mostro o resultado*/}
+                    </div>
+                </div>
+            )
+        }
+
+        function Calculator() {
+            const { operation, result, doOperation } = useCalculator(); //Pega a operação e o resultado que está dentro do hook - A operação e o resultado do hook customizado
+
+            //FUNÇÂO EVAL = Executa qualquer JavaScript em formato de String
+
+            function handleInputClick(input) { //Receba o valor que eu cliquei - Como u sei = É o input
+                doOperation(input); //Chama a função que está dentro do hook customizado
+            }
+
+            return (
+                <Card className={`
+                                    flex flex-col gap-[1.625rem] w-[22.25rem]
+                                    pt-14 px-8 pb-8
+                                `}>
+
+                    <CalculatorDisplay operation={operation} result={result} />
+
+                    <div className="flex flex-col gap-3">
+                        {buttons.map((row, index) => (
+                            <div key={`row-${index}`} className="flex gap-3">
+                                {row.map((button, index) => (
+                                    <Button key={button.input} 
+                                            className={button.className || "w-16 h-16"}
+                                            variant={button.variant}
+                                            onClick={() => handleInputClick(button.input)}
+                                    >
+                                        {button.input}
+                                    </Button>
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+
+                </Card>
+            )
+        }
+
+        function OperationHistory() {
+            const { history } = React.useContext(CalculatorContext); //Pega o valor que está dentro do contexto - Pega o valor do contexto
+
+            return (
+                <Card className="w-full py-10 px-8">
+                    <Text
+                        as="h1"
+                        variant="heading"
+                        className="mb-4"
+                    >
+                        Histórico de operações
+                    </Text>
+
+                    {history.length > 0 ? ( //O histório é maior que zero, então desenha a lista
+                        <ul className="flex flex-col gap-3">
+                            {history.map((value, index) =>
+                                <Text key={`item-${index}`} as="li">{value}</Text>
+                            )}
+                        </ul>
+                    ) : (
+                        <Text variant="muted">Nenhuma operação recente</Text>
+                    )}
+                </Card>
+            )
+        }
+
+        function App() {
+            return (
+                <main className={`           
+                    py-28 px-4 sm:px-10
+                    flex flex-col sm:flex-row
+                    items-center sm:items-stretch
+                    gap-2
+                `}>
+                    <CalculatorProvider>
+                        <Calculator />
+                        <OperationHistory />
+                    </CalculatorProvider>
+                </main>
+            )
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+
+    </script> 
+</body>
+</html>

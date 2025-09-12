@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercícios que eu criei</title>
+</head>
+<body>
+    <div id="root"></div>
+        
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>   
+
+    <script type="text/babel">
+
+        const buttonVariants = {
+            primary: 'bg-violet-400 hover:bg-pink-600',
+            danger: 'bg-yellow-400 hover:bg-red-800',
+            success: 'bg-blue-400 hover:bg-green-800',
+        }
+
+        function ButtonVariants({ variant = 'primary', className, children, ...props }) {
+            return (
+                <button
+                    className={`text-white font-bold py-1 px-4 rounded ${buttonVariants[variant]} ${className}`}
+                    {...props}
+                >
+                    {children}
+                </button>
+            )
+        }
+
+        function Button() {
+            return (
+                <button className="bg-pink-400 hover:bg-pink-600 text-white font-bold py-1 px-4 rounded">
+                    Olá Mundo
+                </button>
+            )
+        }
+
+        function ButtonPerigoso() {
+            return (
+                <button className="bg-red-400 hover:bg-red-800 text-white font-bold py-1 px-4 rounded">
+                    Perigo
+                </button>
+            )
+        }
+
+        function ButtonTeste() {
+            return (
+                <button className="bg-green-400 hover:bg-green-800 text-white font-bold py-1 px-4 rounded">
+                    Teste
+                </button>
+            )
+        }
+
+        function App() {
+            return (
+                <main className="flex gap-8 p-4">
+                    <ButtonVariants  title="Teste" variant="primary">Teste 1</ButtonVariants >
+                    <ButtonVariants variant="danger">Teste 2</ButtonVariants>
+                    <ButtonVariants variant="success">Teste 3</ButtonVariants>
+
+                    <Button />
+                    <ButtonPerigoso />
+                    <ButtonTeste />
+                </main>
+            )
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />)
+    </script> 
+
+</body>
+</html>

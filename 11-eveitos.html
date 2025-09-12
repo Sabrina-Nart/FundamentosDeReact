@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rocketseat - React.js - Fundamentos</title>
+</head>
+<body>
+    <div id="root"></div>
+        
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>   
+
+    <script type="text/babel">
+
+        function Counter() {
+            const [counter, setCounter] = React.useState(0); //Uma dupla - Indice 1 e - O primeito é o Valor que vai ter (estado) e o segundo é a função que vai atualizar o valor - O zero é o valor padrão
+            const [name, setName] = React.useState(''); //Estado para armazenar o nome
+
+            //Clicar em botão e criar funções que esperar que algo aconteça
+
+            React.useEffect(() => { //Efeito colateral - Toda vez que o valor do contador mudar, ele vai disparar essa função
+                console.log('Componente montado!') //Vai mostrar no console o valor atual do contador
+
+                return () => { //Função de limpeza - Quando o componente for desmontado
+                    console.log('Componente desmontado!') //Vai mostrar no console quando o componente for desmontado
+                }
+            }, []) //Execute somente quando o componente for criado
+
+            React.useEffect(() => { //Efeito colateral - Toda vez que o valor do contador mudar, ele vai disparar essa função
+                if (counter > 0) {
+                    console.log(`Contadoe atualizado para: ${counter}`) //Vai mostrar no console o valor atual do contador
+                }
+            }, [counter]) //Como dependencia
+
+            React.useEffect(() => { //Efeito colateral - Toda vez que o valor do nome mudar, ele vai disparar essa função
+                console.log('Contador ou nome atualizado!');
+            }, [counter, name]); //Como dependencia
+
+            return (
+                <>
+                    <div>
+                        <label>Nome:</label>
+                        <input onChange={e => setName(e.target.value)} />
+                    </div>
+
+                    <p>Contador: {counter}</p>
+                    <button onClick={() => setCounter(10)}>Atualizar</button>
+                    <button onClick={() => setCounter((prevValue) => (prevValue + 1))}>Incrementar</button>
+                    <button onClick={() => setCounter((prevValue) => (prevValue - 1))}>Decrementar</button>
+                </>
+            )
+        }
+
+        function App() {
+            const [show, setShow] = React.useState(true); //Estado para mostrar ou ocultar o contador
+
+            return (
+                <main>
+                    <button onClick={() => setShow((prev) => !prev)}>Mostrar/Ocultar Contador</button> {/*Colocar o valor oposto*/}
+                    <hr />
+                    {show && <Counter />}
+                </main>
+            )
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />)
+    </script> 
+
+</body>
+</html>

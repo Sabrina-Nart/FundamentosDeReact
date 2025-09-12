@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercícios que eu criei</title>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>   
+
+    <script type="text/babel">
+
+        // Componente Contador: responsável por exibir e atualizar um contador
+        function Contador() {
+
+            // Hook useState: cria uma variável de estado chamada 'counter' com valor inicial 0
+            // 'setCounter' é a função que atualiza esse valor
+            const [counter, setCounter] = React.useState(0);
+
+            // Função chamada quando o valor do input muda
+            // Atualiza o estado 'counter' com o valor digitado
+            function handleInputChange(event) {
+                setCounter(Number(event.target.value)); //(event.target.value) - Atualiza o estado counter com uma string, porque event.target.value sempre retorna um valor do tipo string, mesmo que o input seja numérico.
+            }
+
+            // JSX que define o que será renderizado na tela
+            return (
+                <div>  {/* Exibe o valor atual do contador dentro de um input numérico */}
+                    <p>Contador: {<input type="number"value={counter} onChange={handleInputChange}/>}</p>
+                    <br />
+                    <button onClick={() => setCounter((prevValue) => (prevValue + 1))}>Incrementar</button>
+                    <button onClick={() => setCounter((prevValue) => (prevValue - 1))}>Decrementar</button>
+                </div>
+            )
+        }
+
+        // Componente principal da aplicação
+        function App() {
+            return (
+                <main> {/* Renderiza o componente Contador dentro do App */}
+                    <Contador />
+                </main>
+            )
+        }
+
+        // Renderiza o componente App dentro da div com id 'root'
+        // Esse é o ponto de entrada da aplicação React
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />)
+    </script> 
+
+</body>
+</html>
